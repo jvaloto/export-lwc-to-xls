@@ -297,3 +297,7 @@ Search for `Export LWC` tab
 You can export individual files or export tables to a single file using parent children LWC
 
 ![tab](./assets/tab.png)
+
+![one_file_opportunity](./assets/one_file_opportunity.png)
+
+![one_file_products](./assets/one_file_products.png)
