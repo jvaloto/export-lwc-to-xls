@@ -1,0 +1,17 @@
+.space{
+    margin: 50px;
+}
+
+.default{
+    border: 1px solid;
+    padding: 2px;
+}
+
+.col{
+    font-weight: bold;
+    background-color: #bfbf67;
+}
+
+.value{
+    background-color: #e0e0e0;
+}

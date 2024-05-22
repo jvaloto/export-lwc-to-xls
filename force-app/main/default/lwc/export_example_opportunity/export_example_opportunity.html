@@ -1,0 +1,42 @@
+<template>
+    <template if:true={opportunity}>
+        <lightning-card title={opportunity.Name} class="space">
+            <lightning-button
+                variant="brand"
+                label="Export Opportunity"
+                slot="actions"
+                onclick={handleExport}
+            ></lightning-button>
+
+            <!-- lwc:ref to get by reference  -->
+            <table lwc:ref="opportunityTable">
+                <tr>
+                    <td data-xls-style="o-col" class="default col">Name</td>
+                    <td data-xls-style="o-value" class="default value">{opportunity.Name}</td>
+                    <td>&nbsp;</td>
+                    <td data-xls-style="o-col" class="default col">Owner</td>
+                    <td data-xls-style="o-value" class="default value">{opportunity.Owner.Name}</td>
+                </tr>
+                <tr>
+                    <td data-xls-style="o-col" class="default col">Account</td>
+                    <td data-xls-style="o-value" class="default value">{opportunity.Account.Name}</td>
+                    <td>&nbsp;</td>
+                    <td data-xls-style="o-col" class="default col">Lead Source</td>
+                    <td data-xls-style="o-value" class="default value">{opportunity.LeadSource}</td>
+                </tr>
+                <tr>
+                    <td data-xls-style="o-col" class="default col">Amount</td>
+                    <td data-xls-style="o-value-money" data-xls-type="Number" class="default value">{opportunity.Amount}</td>
+                    <td>&nbsp;</td>
+                    <td data-xls-style="o-col" class="default col">Close Date</td>
+                    <td data-xls-style="o-value" data-xls-type="DateTime" data-xls-value={opportunity.closeDateValue} class="default value">{opportunity.CloseDate}</td>
+                </tr>
+                <tr>
+                    <td data-xls-style="o-col" class="default col">Type</td>
+                    <td data-xls-style="o-value" class="default value">{opportunity.Type}</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </lightning-card>
+    </template>
+</template>
