@@ -29,11 +29,11 @@ export function exportXLSX(config, fileName){
     `;
 
     let tmplRowXML = `
-        <ss:Row {height}>
+        <Row {height}>
     `;
 
     let tmplCellXML = `
-        <Cell {attributeStyleID}>
+        <Cell {attributeStyleID} {colspan} {rowspan}>
             <Data ss:Type="{nameType}">{data}</Data>
         </Cell>
     `;
@@ -45,8 +45,11 @@ export function exportXLSX(config, fileName){
             table.table = '';
         }
 
-        if(!table.zoom){
+        if(table.zoom === undefined){
             table.zoom = 100;
+        }
+        if(table.displayGrid === undefined){
+            table.displayGrid = true;
         }
 
         if(table.style){
@@ -99,7 +102,7 @@ export function exportXLSX(config, fileName){
                     attributeStyleID: dataStyle ? `ss:StyleID="${dataStyle}"` : '',
                     nameType: dataType,
                     data: dataValue,
-                    colspan: colspan ? `ss:MergeAcross=${colspan - 1}` : '',
+                    colspan: colspan ? `ss:MergeAcross="${colspan - 1}"` : '',
                     rowspan: rowspan ? `ss:MergeDown="${rowspan - 1}"` : '',
                 };
 
