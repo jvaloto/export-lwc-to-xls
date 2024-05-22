@@ -1,0 +1,16 @@
+<template>
+    <lightning-card title="Export Opportunity and Products">
+        <lightning-button
+            variant="brand"
+            label="Export All"
+            slot="actions"
+            onclick={handleExport}
+        ></lightning-button>
+    </lightning-card>
+
+    <!-- child component -->
+    <c-export_example_opportunity></c-export_example_opportunity>
+    
+    <!-- child component -->
+    <c-export_example_products></c-export_example_products>
+</template>
