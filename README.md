@@ -263,12 +263,15 @@ XML file is sensitivity and will corrupt if something is wrong.
 
 # HTML XLS Attributes
 
-|Tag|Description|
-|-|-|
-|data-xls-style|`ss:ID` of the XML Style - only one per html tag|
-|data-xls-type|Type of value - `Number/DateTime/Boolean/String`|
-|data-xls-value|Value to export, if blank will use same value inside `<td>` html tag|
-|colspan|HTML default tag - used to merge horizontal cells|
+All `data-xls-*` attributes are optional.
+
+|Tag|Description|Additional information|
+|-|-|-|
+|data-xls-style|`ss:ID` of the XML Style|Only one per html tag|
+|data-xls-type|Type of value|`Number/DateTime/Boolean/String`|
+|data-xls-value|Value to export|e.g: use this attribute to show formatted values in LWC but export only numbers to XLSX file<br>If blank will use `innerHTML` of `<td>` html tag|
+|data-xls-width|Width of column|You need to apply this tag just in `<td>` tags only for the first `<tr>`<br>If blank will be set as default (± 64)|
+|colspan|HTML default tag|Used to merge horizontal cells|
 
 # Deploy and Test
 

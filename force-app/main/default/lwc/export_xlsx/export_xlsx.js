@@ -23,7 +23,7 @@ export function exportXLSX(config, fileName){
                 {displayGrid} {zoom}
             </WorksheetOptions>
             <Table>
-                {rows}
+                {columns} {rows}
             </Table>
         </Worksheet>
     `;
@@ -71,6 +71,8 @@ export function exportXLSX(config, fileName){
     let rowsXML = "";
 
     for(let i = 0; i < config.length; i++){
+        let columns = '';
+
         for(let j = 0; j < config[i].table.rows.length; j++){
             // row config
             let height = config[i].table.rows[j].getAttribute("data-xls-height");
@@ -86,6 +88,7 @@ export function exportXLSX(config, fileName){
                 let dataType = config[i].table.rows[j].cells[k].getAttribute("data-xls-type");
                 let dataStyle = config[i].table.rows[j].cells[k].getAttribute("data-xls-style");
                 let dataValue = config[i].table.rows[j].cells[k].getAttribute("data-xls-value");
+                let colWidth = config[i].table.rows[j].cells[k].getAttribute("data-xls-width");
                 let colspan = config[i].table.rows[j].cells[k].getAttribute("colspan");
                 let rowspan = config[i].table.rows[j].cells[k].getAttribute("rowspan");
 
@@ -96,6 +99,10 @@ export function exportXLSX(config, fileName){
                 }else if(!isNaN(dataValue)){
                     dataType = 'Number';
                     dataValue = parseFloat(dataValue);
+                }
+
+                if(colWidth){
+                    columns += `<Column ss:Width="${colWidth}"/>`;
                 }
 
                 let cellCTX = {
@@ -118,6 +125,7 @@ export function exportXLSX(config, fileName){
             nameWS: config[i].tabName || 'Sheet ' + i,
             displayGrid: config[i].displayGrid ? '' : '<DoNotDisplayGridlines/>',
             zoom: config[i].zoom ? `<Zoom>${config[i].zoom}</Zoom>` : '',
+            columns: columns,
         };
 
         worksheetsXML += format(tmplWorksheetXML, workbookCTX);
