@@ -1,43 +1,4 @@
 export function exportXLSX(config, fileName){
-    let uri = 'data:application/vnd.ms-excel;base64;charset=utf-8,';
-
-    let tmplWorkbookXML = `
-        <?xml version="1.0" encoding="windows-1252"?>
-        <?mso-application progid="Excel.Sheet"?>
-        <Workbook 
-            xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-            xmlns:o="urn:schemas-microsoft-com:office:office"
-            xmlns:x="urn:schemas-microsoft-com:office:excel"
-            xmlns:html="http://www.w3.org/TR/REC-html40"
-        >
-            <Styles>
-                {styles}
-            </Styles>
-            {worksheets}
-        </Workbook>
-    `;
-
-    let tmplWorksheetXML = `
-        <Worksheet ss:Name="{nameWS}">
-            <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-                {displayGrid} {zoom}
-            </WorksheetOptions>
-            <Table>
-                {columns} {rows}
-            </Table>
-        </Worksheet>
-    `;
-
-    let tmplRowXML = `
-        <Row {height}>
-    `;
-
-    let tmplCellXML = `
-        <Cell {attributeStyleID} {colspan} {rowspan}>
-            <Data ss:Type="{nameType}">{data}</Data>
-        </Cell>
-    `;
-
     let styles = '';
 
     config.forEach(table =>{
@@ -81,7 +42,7 @@ export function exportXLSX(config, fileName){
                 height: height ? `ss:Height="${height}"` : ''
             }
 
-            rowsXML += format(tmplRowXML, rowCTX);
+            rowsXML += format(getTemplateRow(), rowCTX);
 
             for(let k = 0; k < config[i].table.rows[j].cells.length; k++){
                 // cell config
@@ -113,7 +74,7 @@ export function exportXLSX(config, fileName){
                     rowspan: rowspan ? `ss:MergeDown="${rowspan - 1}"` : '',
                 };
 
-                rowsXML += format(tmplCellXML, cellCTX);
+                rowsXML += format(getTemplateCell(), cellCTX);
             }
 
             rowsXML += '</Row>';
@@ -128,7 +89,7 @@ export function exportXLSX(config, fileName){
             columns: columns,
         };
 
-        worksheetsXML += format(tmplWorksheetXML, workbookCTX);
+        worksheetsXML += format(getTemplateWorksheet(), workbookCTX);
 
         rowsXML = "";
     }
@@ -139,14 +100,65 @@ export function exportXLSX(config, fileName){
         styles: styles,
     };
 
-    workbookXML = format(tmplWorkbookXML, fileCTX);
+    workbookXML = format(getTemplateWorkbook(), fileCTX);
 
     // download file
     let link = document.createElement('a');
-    link.href = uri + base64('\uFEFF' + workbookXML);
+    link.href = getURI() + base64('\uFEFF' + workbookXML);
     link.download = fileName;
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+function getURI(){
+    return `
+        data:application/vnd.ms-excel;base64;charset=utf-8,
+    `
+}
+
+function getTemplateWorkbook(){
+    return `
+        <?xml version="1.0" encoding="windows-1252"?>
+        <?mso-application progid="Excel.Sheet"?>
+        <Workbook 
+            xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns:html="http://www.w3.org/TR/REC-html40"
+        >
+            <Styles>
+                {styles}
+            </Styles>
+            {worksheets}
+        </Workbook>
+        `;
+}
+
+function getTemplateWorksheet(){
+    return `
+        <Worksheet ss:Name="{nameWS}">
+            <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+                {displayGrid} {zoom}
+            </WorksheetOptions>
+            <Table>
+                {columns} {rows}
+            </Table>
+        </Worksheet>
+    `;
+}
+
+function getTemplateRow(){
+    return `
+        <Row {height}>
+    `;
+}
+
+function getTemplateCell(){
+    return `
+        <Cell {attributeStyleID} {colspan} {rowspan}>
+            <Data ss:Type="{nameType}">{data}</Data>
+        </Cell>
+    `;
 }
