@@ -50,7 +50,7 @@ export function exportXLSX(config, fileName){
 
                 let dataType = cell.getAttribute("data-xls-type");
                 let dataStyle = cell.getAttribute("data-xls-style");
-                let dataValue = cell.getAttribute("data-xls-value");
+                let dataValue = cell.getAttribute("data-xls-value") || cell.innerHTML;
                 let colspan = cell.getAttribute("colspan");
                 let rowspan = cell.getAttribute("rowspan");
                 let isRowspan = cell.getAttribute("data-xls-is-rowspan");
@@ -65,11 +65,9 @@ export function exportXLSX(config, fileName){
                             let newTD = document.createElement('td');
                             newTD.setAttribute('data-xls-is-rowspan', 'true');
 
-                            config[i].table.rows[rowspanI].cells[k].before(newTD);
+                            config[i].table.rows[rowspanI].insertBefore(newTD, config[i].table.rows[rowspanI].cells[k]);
                         }
                     }
-
-                    dataValue = dataValue ? dataValue : cell.innerHTML;
 
                     if(!dataType){
                         dataType = 'String';
