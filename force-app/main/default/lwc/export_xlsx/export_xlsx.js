@@ -49,7 +49,6 @@ export function exportXLSX(config, fileName){
                 let dataType = config[i].table.rows[j].cells[k].getAttribute("data-xls-type");
                 let dataStyle = config[i].table.rows[j].cells[k].getAttribute("data-xls-style");
                 let dataValue = config[i].table.rows[j].cells[k].getAttribute("data-xls-value");
-                let colWidth = config[i].table.rows[j].cells[k].getAttribute("data-xls-width");
                 let colspan = config[i].table.rows[j].cells[k].getAttribute("colspan");
                 let rowspan = config[i].table.rows[j].cells[k].getAttribute("rowspan");
 
@@ -60,10 +59,6 @@ export function exportXLSX(config, fileName){
                 }else if(!isNaN(dataValue)){
                     dataType = 'Number';
                     dataValue = parseFloat(dataValue);
-                }
-
-                if(colWidth){
-                    columns += `<Column ss:Width="${colWidth}"/>`;
                 }
 
                 let cellCTX = {
@@ -78,6 +73,17 @@ export function exportXLSX(config, fileName){
             }
 
             rowsXML += '</Row>';
+        }
+
+        if(config[i].columns){
+            config[i].columns.forEach(column =>{
+                let columnCTX = {
+                    width: column.width ? ` ss:Width="${column.width}" ` : '',
+                    hidden: column.hide ? ` ss:Hidden="1" ` : '',
+                };
+
+                columns += format(getTemplateColumn(), columnCTX);
+            });
         }
 
         // workbook config
@@ -160,5 +166,11 @@ function getTemplateCell(){
         <Cell {attributeStyleID} {colspan} {rowspan}>
             <Data ss:Type="{nameType}">{data}</Data>
         </Cell>
+    `;
+}
+
+function getTemplateColumn(){
+    return `
+        <Column {width} {hidden} />
     `;
 }

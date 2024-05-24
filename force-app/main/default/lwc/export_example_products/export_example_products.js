@@ -39,7 +39,13 @@ export default class Export_example_products extends LightningElement{
             tabName: 'Products',
             displayGrid: false,
             zoom: 90,
-            style: this.getXLSStyle()
+            style: this.getXLSStyle(),
+            columns:[
+                {width: 150},
+                {width: 100},
+                {width: 50},
+                {width: 50, hidden: true},
+            ]
         };
     }
 

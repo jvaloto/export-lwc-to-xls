@@ -17,12 +17,14 @@
                     <td data-xls-style="p-col-title" data-xls-width="150" class="default title">Name</td>
                     <td data-xls-style="p-col-title" data-xls-width="100" class="default title">Code</td>
                     <td data-xls-style="p-col-title" class="default title">Price</td>
+                    <td data-xls-style="p-col-title" class="default title">Discount</td>
                 </tr>
                 <template for:each={products} for:item="product">
                     <tr key={product.key}>
                         <td data-xls-style="p-col-value-text" class="default text">{product.Product2.Name}</td>
                         <td data-xls-style="p-col-value-text" class="default text">{product.Product2.ProductCode}</td>
                         <td data-xls-style="p-col-value-money" data-xls-type="Number" class="default number">{product.UnitPrice}</td>
+                        <td data-xls-style="p-col-value-percent" data-xls-type="Number" data-xls-value="0.5" class="default number">50%</td>
                     </tr>
                 </template>
             </table>

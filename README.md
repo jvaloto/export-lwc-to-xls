@@ -26,6 +26,9 @@ The message that is shown when you open this type of file are always displayed, 
   - [Get HTML table](#get-html-table)
     - [Using fixed HTML table](#using-fixed-html-table)
     - [Using backend dynamic table](#using-backend-dynamic-table)
+- [Attributes](#attributes)
+  - [HTML XLS](#html-xls)
+  - [JSON](#json)
 - [Tips](#tips)
   - [Code](#code)
   - [Style](#style)
@@ -35,7 +38,6 @@ The message that is shown when you open this type of file are always displayed, 
 - [How to corrupt your file](#how-to-corrupt-your-file)
   - [Should](#should)
   - [Shouldn't](#shouldnt)
-- [HTML XLS Attributes](#html-xls-attributes)
 - [Deploy and Test](#deploy-and-test)
 
 # Microsoft Documentation
@@ -79,11 +81,11 @@ import { exportXLSX } from 'c/export_xlsx';
 @api
 getXLSConfig(){
     return {
-        table: this.refs.opportunityTable,  // table from lwc
-        tabName: 'Opportunity',             // worksheet name
-        displayGrid: true,                  // show or hide gridlines
-        zoom: 120,                          // default zoom
-        style: this.getXLSStyle()           // <Style> xml tags
+        table: this.refs.opportunityTable,
+        tabName: 'Opportunity',
+        displayGrid: true,
+        zoom: 120,
+        style: this.getXLSStyle()
     };
 }
 ```
@@ -160,6 +162,31 @@ getXLSConfig()(){
     this.template.querySelector("#dynamicTable")
 }
 ```
+
+# Attributes
+
+## HTML XLS 
+
+All attributes are optional.
+
+|Tag|Description|Additional information|
+|-|-|-|
+|data-xls-style|`ss:ID` of the XML Style|Only one per html tag|
+|data-xls-type|Type of value|`Number/DateTime/Boolean/String`|
+|data-xls-value|Value to export|e.g: use this attribute to show formatted values in LWC but export only numbers to XLSX file<br>If blank will use `innerHTML` of `<td>` html tag|
+|colspan|HTML default tag|Used to merge horizontal cells|
+
+## JSON
+
+>getXLSConfig()
+
+|Attribute|Type|Default value|Description|
+|-|-|-|-|
+|tabName|$(table)|-|LWC reference table|
+|displayGrid|boolean|true|Show gridlines|
+|zoom|Decimal|100|Worksheet zoom|
+|style|String (Array of `<Style>`)|`''`|String with an Array of `<Style>`|
+|columns|Array<{width: Decimal, hidden: boolean}>|[]|Array of column definition<br>If you use this config, you need to specify exact number of columns|
 
 # Tips 
 
@@ -260,18 +287,6 @@ XML file is sensitivity and will corrupt if something is wrong.
 - use specific html tags such as:
     - `<hr>`
     - `<br>`
-
-# HTML XLS Attributes
-
-All `data-xls-*` attributes are optional.
-
-|Tag|Description|Additional information|
-|-|-|-|
-|data-xls-style|`ss:ID` of the XML Style|Only one per html tag|
-|data-xls-type|Type of value|`Number/DateTime/Boolean/String`|
-|data-xls-value|Value to export|e.g: use this attribute to show formatted values in LWC but export only numbers to XLSX file<br>If blank will use `innerHTML` of `<td>` html tag|
-|data-xls-width|Width of column|You need to apply this tag just in `<td>` tags only for the first `<tr>`<br>If blank will be set as default (± 64)|
-|colspan|HTML default tag|Used to merge horizontal cells|
 
 # Deploy and Test
 
