@@ -175,6 +175,7 @@ All attributes are optional.
 |data-xls-type|Type of value|`Number/DateTime/Boolean/String`|
 |data-xls-value|Value to export|e.g: use this attribute to show formatted values in LWC but export only numbers to XLSX file<br>If blank will use `innerHTML` of `<td>` html tag|
 |colspan|HTML default tag|Used to merge horizontal cells|
+|rowspan|HTML default tag|Used to merge vertical cells|
 
 ## JSON
 
@@ -186,7 +187,7 @@ All attributes are optional.
 |displayGrid|boolean|true|Show gridlines|
 |zoom|Decimal|100|Worksheet zoom|
 |style|String (Array of `<Style>`)|`''`|String with an Array of `<Style>`|
-|columns|Array<{width: Decimal, hidden: boolean}>|[]|Array of column definition<br>If you use this config, you need to specify exact number of columns|
+|columns|Array<{`width`: Decimal, `hidden`: boolean}>|[]|Array of column definition<br>If you use this config, you need to specify exact number of columns|
 
 # Tips 
 
@@ -194,20 +195,26 @@ All attributes are optional.
 
 You need to create your HTML table as an Excel spreadsheet, considering each cell (rows and columns).
 
-You can merge columns using HTML `colspan` default tag.
+You can merge columns using HTML `colspan` and `rowspan` default tag.
 
 ```html
-<table lwc:ref="myTable">
+<table id="myTable">
     <tr>
-        <td colspan="2">A</td>
-        <td>B</td>
+        <td rowspan="3">A</td>
+        <td rowspan="2">B</td>
         <td>C</td>
+        <td colspan="2">D</td>
+        <td>E</td>
     </tr>
     <tr>
-        <td>1</td>
-        <td>1.1</td>
-        <td>2</td>
         <td>3</td>
+        <td>4</td>
+        <td>5</td>
+        <td>6</td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>9</td>
     </tr>
 </table>
 ```

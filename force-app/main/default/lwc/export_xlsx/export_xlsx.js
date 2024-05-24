@@ -2,10 +2,6 @@ export function exportXLSX(config, fileName){
     let styles = '';
 
     config.forEach(table =>{
-        if(!table.table){
-            table.table = '';
-        }
-
         if(table.zoom === undefined){
             table.zoom = 100;
         }
@@ -36,7 +32,9 @@ export function exportXLSX(config, fileName){
 
         for(let j = 0; j < config[i].table.rows.length; j++){
             // row config
-            let height = config[i].table.rows[j].getAttribute("data-xls-height");
+            let row = config[i].table.rows[j];
+
+            let height = row.getAttribute("data-xls-height");
 
             let rowCTX = {
                 height: height ? `ss:Height="${height}"` : ''
@@ -44,32 +42,57 @@ export function exportXLSX(config, fileName){
 
             rowsXML += format(getTemplateRow(), rowCTX);
 
-            for(let k = 0; k < config[i].table.rows[j].cells.length; k++){
+            let index = 1;
+
+            for(let k = 0; k < row.cells.length; k++){
                 // cell config
-                let dataType = config[i].table.rows[j].cells[k].getAttribute("data-xls-type");
-                let dataStyle = config[i].table.rows[j].cells[k].getAttribute("data-xls-style");
-                let dataValue = config[i].table.rows[j].cells[k].getAttribute("data-xls-value");
-                let colspan = config[i].table.rows[j].cells[k].getAttribute("colspan");
-                let rowspan = config[i].table.rows[j].cells[k].getAttribute("rowspan");
+                let cell = row.cells[k];
 
-                dataValue = dataValue ? dataValue : config[i].table.rows[j].cells[k].innerHTML;
+                let dataType = cell.getAttribute("data-xls-type");
+                let dataStyle = cell.getAttribute("data-xls-style");
+                let dataValue = cell.getAttribute("data-xls-value");
+                let colspan = cell.getAttribute("colspan");
+                let rowspan = cell.getAttribute("rowspan");
+                let isRowspan = cell.getAttribute("data-xls-is-rowspan");
 
-                if(!dataType){
-                    dataType = 'String';
-                }else if(!isNaN(dataValue)){
-                    dataType = 'Number';
-                    dataValue = parseFloat(dataValue);
+                if(isRowspan){
+                    index ++;
+                }else{
+                    if(rowspan){
+                        rowspan = parseFloat(rowspan);
+
+                        for(let rowspanI = 1; rowspanI < rowspan; rowspanI ++){
+                            let newTD = document.createElement('td');
+                            newTD.setAttribute('data-xls-is-rowspan', 'true');
+
+                            config[i].table.rows[rowspanI].cells[k].before(newTD);
+                        }
+                    }
+
+                    dataValue = dataValue ? dataValue : cell.innerHTML;
+
+                    if(!dataType){
+                        dataType = 'String';
+                    }else if(!isNaN(dataValue)){
+                        dataType = 'Number';
+                        dataValue = parseFloat(dataValue);
+                    }
+
+                    let cellCTX = {
+                        attributeStyleID: dataStyle ? `ss:StyleID="${dataStyle}"` : '',
+                        nameType: dataType,
+                        data: dataValue,
+                        colspan: colspan ? `ss:MergeAcross="${colspan - 1}"` : '',
+                        rowspan: rowspan ? `ss:MergeDown="${rowspan - 1}"` : '',
+                        index: index > 1 ? ` ss:Index="${index}" ` : '',
+                    };
+
+                    if(index > 1){
+                        index = 1;
+                    }
+
+                    rowsXML += format(getTemplateCell(), cellCTX);
                 }
-
-                let cellCTX = {
-                    attributeStyleID: dataStyle ? `ss:StyleID="${dataStyle}"` : '',
-                    nameType: dataType,
-                    data: dataValue,
-                    colspan: colspan ? `ss:MergeAcross="${colspan - 1}"` : '',
-                    rowspan: rowspan ? `ss:MergeDown="${rowspan - 1}"` : '',
-                };
-
-                rowsXML += format(getTemplateCell(), cellCTX);
             }
 
             rowsXML += '</Row>';
@@ -79,7 +102,7 @@ export function exportXLSX(config, fileName){
             config[i].columns.forEach(column =>{
                 let columnCTX = {
                     width: column.width ? ` ss:Width="${column.width}" ` : '',
-                    hidden: column.hide ? ` ss:Hidden="1" ` : '',
+                    hidden: column.hidden ? ` ss:Hidden="1" ` : '',
                 };
 
                 columns += format(getTemplateColumn(), columnCTX);
@@ -98,6 +121,11 @@ export function exportXLSX(config, fileName){
         worksheetsXML += format(getTemplateWorksheet(), workbookCTX);
 
         rowsXML = "";
+
+        // remove used td for rowspan
+        config[i].table.querySelectorAll('td[data-xls-is-rowspan]').forEach(td =>{
+            td.remove();
+        });
     }
 
     // file config
@@ -163,7 +191,7 @@ function getTemplateRow(){
 
 function getTemplateCell(){
     return `
-        <Cell {attributeStyleID} {colspan} {rowspan}>
+        <Cell {attributeStyleID} {colspan} {rowspan} {index}>
             <Data ss:Type="{nameType}">{data}</Data>
         </Cell>
     `;
