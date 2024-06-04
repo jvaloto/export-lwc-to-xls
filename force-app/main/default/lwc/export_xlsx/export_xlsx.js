@@ -70,10 +70,11 @@ export function exportXLSX(config, fileName){
                     }
 
                     if(!dataType){
-                        dataType = 'String';
-                    }else if(!isNaN(dataValue)){
-                        dataType = 'Number';
-                        dataValue = parseFloat(dataValue);
+                        if(isNaN(dataValue)){
+                            dataType = 'String';
+                        }else{
+                            dataType = 'Number';
+                        }
                     }
 
                     let cellCTX = {
